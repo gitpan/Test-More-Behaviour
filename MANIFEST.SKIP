@@ -1,0 +1,8 @@
+.git
+.DS_Store
+blib
+.bak$
+Makefile$
+Makefile.old
+Behaviour*.tar.gz
+t/Behaviour.t

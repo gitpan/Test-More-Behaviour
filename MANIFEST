@@ -1,0 +1,6 @@
+lib/Test/More/Behaviour.pm
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README
+META.yml                                 Module meta-data (added by MakeMaker)
