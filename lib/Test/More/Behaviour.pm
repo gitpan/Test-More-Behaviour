@@ -8,62 +8,64 @@ use base 'Test::More';
 use Test::More;
 use Term::ANSIColor;
 
-use version; our $VERSION = qv('0.4.0');
+use version; our $VERSION = qv('0.4.1');
 
 our @EXPORT = ( @Test::More::EXPORT, qw(describe context it) );
 
-my $spec_desc;
-my $context_desc;
+my $spec_description;
+my $context_description;
 my $passed = 1;
 
 sub describe {
-  $spec_desc = shift;
-  my $block  = shift;
+  $spec_description = shift;
+  my $block         = shift;
+
+  caller->before_all if caller->can('before_all');
   $block->();
-  $spec_desc = undef;
+  caller->after_all if caller->can('after_all');
+
+  $spec_description = undef;
 
   return;
 }
 
 sub context {
-  $context_desc = shift;
-  my $block     = shift;
+  $context_description = shift;
+  my $block            = shift;
   $block->();
-  $context_desc = undef;
+  $context_description = undef;
 
   return;
 }
 
 sub it {
-  my $description = shift;
-  my $block       = shift;
+  my ($description, $block) = @_;
 
-  caller->set_up if caller->can('set_up');
+  caller->before_each if caller->can('before_each');
   _evaluate_and_print_subtest($description, $block);
-  caller->tear_down if caller->can('tear_down');
+  caller->after_each if caller->can('after_each');
 
   return;
 }
 
 sub _evaluate_and_print_subtest {
-  my $desc  = shift;
-  my $block = shift;
+  my ($description, $block) = @_;
 
-  return _subtest(_construct_description($desc) => _subtest_block($block));
+  print _subtest(_construct_description($description) => _subtest_block($block));
+
+  return;
 }
 
 sub _subtest {
-    my $desc  = shift;
-    my $block = shift;
+    my ($description, $block) = @_;
 
     $block->();
-    print $desc->(),"\n";
-
-    return;
+    return $description->(),"\n";
 }
 
 sub _subtest_block {
   my $block = shift;
+
   return sub {
     eval {
       $passed = $block->();
@@ -78,8 +80,8 @@ sub _subtest_block {
 sub _construct_description {
   my $result = shift;
 
-  $result = "$spec_desc\n  $result" if $spec_desc and (! $context_desc);
-  $result = "$spec_desc\n  $context_desc\n    $result" if $spec_desc and $context_desc;
+  $result = "$spec_description\n  $result" if $spec_description and (! $context_description);
+  $result = "$spec_description\n  $context_description\n    $result" if $spec_description and $context_description;
 
   return sub { colored [$passed ? 'green' : 'red'], $result };
 }
