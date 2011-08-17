@@ -1,6 +1,8 @@
-lib/Test/More/Behaviour.pm
+Changes
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 README
+t/Behaviour.t
+lib/Test/More/Behaviour.pm
 META.yml                                 Module meta-data (added by MakeMaker)
