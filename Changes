@@ -1,3 +1,17 @@
+== Version 0.4.3 / 2011-08-17
+
+* Enhancements
+  * Improved documentation
+  * Added ABSTRACT_FROM in Makefile.PL
+
+== Version 0.4.2 / 2011-08-16
+
+* Enhancements
+  * Added tests to distribution tar.gz
+  * Added a whole slew of tests
+  * Added documentation for CPAN
+  * Minor refactorings
+
 === Version 0.4.1 / 2011-08-09
 
 * Enhancements
