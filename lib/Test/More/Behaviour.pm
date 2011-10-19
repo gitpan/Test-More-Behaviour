@@ -1,40 +1,36 @@
 package Test::More::Behaviour;
 
-use 5.010000;
+use 5.008000;
 use strict;
 use warnings;
 
 use base 'Test::More';
 use Test::More;
-use Term::ANSIColor qw(colored);
+use Test::More::Behaviour::Helper qw(evaluate_and_print_subtest spec_description context_description);
 
-use version; our $VERSION = qv('0.4.3');
+use version; our $VERSION = qv('0.4.4');
 
 our @EXPORT = ( @Test::More::EXPORT, qw(describe context it) );
 
-my $spec_description;
-my $context_description;
-my $passed = 1;
-
 sub describe {
-  $spec_description = shift;
-  my $block         = shift;
+  spec_description(shift);
+  my $block      = shift;
 
   caller->before_all if caller->can('before_all');
   $block->();
   caller->after_all if caller->can('after_all');
 
-  $spec_description = undef;
+  spec_description(undef);
 
   return;
 }
 
 sub context {
-  $context_description = shift;
-  my $block            = shift;
+  context_description(shift);
+  my $block         = shift;
 
   $block->();
-  $context_description = undef;
+  context_description(undef);
 
   return;
 }
@@ -43,53 +39,13 @@ sub it {
   my ($description, $block) = @_;
 
   caller->before_each if caller->can('before_each');
-  _evaluate_and_print_subtest($description, $block);
+  evaluate_and_print_subtest($description, $block);
   caller->after_each if caller->can('after_each');
 
   return;
 }
 
-sub _evaluate_and_print_subtest {
-  my ($description, $block) = @_;
-
-  print _subtest(_construct_description($description) => _subtest_block($block));
-
-  return;
-}
-
-sub _subtest {
-  my ($description, $block) = @_;
-
-  $block->();
-  return $description->(),"\n";
-}
-
-sub _subtest_block {
-  my $block = shift;
-
-  return sub {
-    eval {
-      $passed = $block->();
-      1;
-    } or do {
-      $passed = 0;
-      fail($@);
-    };
-  };
-}
-
-sub _construct_description {
-  my $result = shift;
-
-  $result = "$spec_description\n  $result" if $spec_description and (! $context_description);
-  $result = "$spec_description\n  $context_description\n    $result" if $spec_description and $context_description;
-
-  return sub { colored [_color()], $result };
-}
-
-sub _color {
-  return $passed ? 'green' : 'red';
-};
+1;
 
 __END__
 
@@ -130,9 +86,11 @@ Because Test::More::Behaviour uses Test::More as its 'base', you can treat every
 
 This project is built with the philosophy that 'Tests are the Documentation'.  For a full set of features, please read through the test scenarios.
 
+=over
+
 =item B<describe>
 
-Use to group a set of examples of a particular behaviour of the system that you wish you describe.
+Used to group a set of examples of a particular behaviour of the system that you wish you describe.
 
 =item B<it>
 
@@ -140,7 +98,7 @@ An example to run.
 
 =item B<context>
 
-Use this to further establish deeper relations for a set of examples.  This is best used when several examples have similar interactions with the system but have differring expectations.
+Used to further establish deeper relations for a set of examples.  This is best used when several examples have similar interactions with the system but have differring expectations.
 
 =item B<before_all>
 
@@ -150,15 +108,19 @@ Use this to further establish deeper relations for a set of examples.  This is b
 
 =item B<after_all>
 
-You can use these to define code which executes before and after each example or only once per example group.
+Used to define code which executes before and after each example or only once per example group.
+
+=back
 
 =head1 SOURCE
 
 The source code for Test::More::Behaviour can be found at F<https://github.com/bostonaholic/test-more-behaviour>
 
-=head1 KNOWN BUGS
+=head1 BUGS AND LIMITATIONS
 
-None, yet.  But please, send me an email or send me a github pull request with a broken test (and your fix if you're able to) and I will be more than happy to fix.
+Currently, each `it` will not run as a Test::More::subtest.  This is because the coloring was not working correctly because subtest needed the description before evaluating the block passed in.  If you can fix this, please submit a github pull request and I will take a look.
+
+If you do find any bugs, please send me an email or send me a github pull request with a broken test (and your fix if you're able to) and I will be more than happy to fix.
 
 =head1 DEPENDENCIES
 
@@ -174,8 +136,15 @@ L<IO::Capture::Stdout> (test only)
 
 Matthew Boston <matthew DOT boston AT gmail DOT com> with special thanks to Dustin Williams.
 
-* I assume no responsibility if this documentation is incorrect or outdated.  The tests are fully documenting of this software.
+=head1 COPYRIGHT
+
+Copyright (c) 2011 Matthew Boston.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 DISCLAIMER
+
+I assume no responsibility if this documentation is incorrect or outdated.  The tests are fully documenting of this software.
 
 =cut
-
-1;
