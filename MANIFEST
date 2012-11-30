@@ -7,5 +7,4 @@ t/Behaviour.t
 t/Helper.t
 lib/Test/More/Behaviour.pm
 lib/Test/More/Behaviour/Helper.pm
-
 META.yml                                 Module meta-data (added by MakeMaker)
