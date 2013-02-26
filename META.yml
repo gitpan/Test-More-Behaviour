@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Test-More-Behaviour
-version:            0.4.8
+version:            1.0.0
 abstract:           BDD module for Perl
 author:
     - Matthew Boston <matthew.boston@gmail.com>
