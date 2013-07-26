@@ -7,7 +7,7 @@ use base 'Test::More';
 use Test::More;
 use Test::More::Behaviour::Helper qw(evaluate_and_print_subtest spec_description context_description);
 
-use version; our $VERSION = qv('1.0.0');
+use version; our $VERSION = qv('1.0.1');
 
 our @EXPORT = ( @Test::More::EXPORT, qw(describe context it) );
 
@@ -82,7 +82,7 @@ code:
           $source->transfer(50, $target);
 
           is($source->balance, 50);
-          is($source->balance, 50);
+          is($target->balance, 50);
       };
   };
 
